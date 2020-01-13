@@ -1,0 +1,35 @@
+<div>
+  <br>
+  <mat-card>
+    <h3>Post</h3>
+    <mat-divider></mat-divider>
+    <br>
+    <mat-accordion *ngIf="posts.length > 0">
+      <mat-expansion-panel
+      (opened)= "openState = true"
+      (closed)="openState = false"
+      *ngFor="let post of posts"
+
+      >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Details
+        </mat-panel-title>
+        <mat-panel-description>
+          The panel is {{openState ? 'Opened' : 'Closed'}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <p>{{post.title}}</p>
+      <p>{{post.description}}</p>
+      <mat-action-row>
+        <button mat-button color="primary">Edit</button>
+        <button mat-button color="warn">Delete</button>
+      </mat-action-row>
+      </mat-expansion-panel
+      >
+    </mat-accordion>
+  </mat-card>
+  <p *ngIf="posts.length <= 0" class="text">
+    No Posts at the moment
+  </p>
+</div>
