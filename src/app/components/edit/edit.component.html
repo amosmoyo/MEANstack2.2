@@ -1,6 +1,6 @@
 <div>
   <mat-card>
-  <form [formGroup]="postForm" (ngSubmit)="onAddPost()">
+  <form [formGroup]="updateForm" (ngSubmit)="onAddPost()">
 
     <mat-form-field>
       <input
@@ -22,8 +22,8 @@
     <div>
       <button mat-stroked-button type="button" color="accent" (click)="pickImg.click()">Select Image</button>
       <input type="file" #pickImg (change)="onImagePick($event)"/>
-      <div class="image" *ngIf="previewImage !== '' && previewImage && postForm.get('image').valid ">
-        <img [src]="previewImage" [alt]="postForm.get('title')">
+      <div class="image" *ngIf="previewImage !== '' && previewImage && updateForm.get('image').valid ">
+        <img [src]="previewImage" [alt]="updateForm.get('title')">
       </div>
     </div>
 
@@ -43,7 +43,7 @@
     <br>
     <button
       type="submit"
-      [disabled]="postForm.pristine || postForm.invalid"
+      [disabled]="updateForm.pristine || updateForm.invalid"
       mat-raised-button color="accent"
       >Save post</button>
   </form>

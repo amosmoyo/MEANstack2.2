@@ -1,5 +1,10 @@
 <div>
   <mat-toolbar color="primary">
-     {{title}}
+     <span routerLink="/post">{{title}}</span>
+     <span class="space"></span>
+     <button mat-button [matMenuTriggerFor]="menu">Details</button>
+     <mat-menu #menu="matMenu">
+       <a mat-menu-item routerLink="/create" routerLinkActive="mat-accent">Create Post</a>
+     </mat-menu>
   </mat-toolbar>
 </div>

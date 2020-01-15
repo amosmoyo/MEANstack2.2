@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Amos } from 'src/app/amos';
 import { AmosService } from 'src/app/amos.service';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post',
@@ -19,15 +20,26 @@ export class PostComponent implements OnInit, OnDestroy {
     {title: 'first post', description: 'this is my first post'}
     */
   ];
-  constructor(private amosservice: AmosService) { }
+  constructor(
+    private amosservice: AmosService,
+    private router: Router
+    ) { }
 
   ngOnInit() {
-    this.posts = this.amosservice.myPost();
+    this.amosservice.myPost();
     this.sub = this.amosservice.getPostsUpdate()
     .subscribe((data: Amos[]) => {
       this.posts = data;
     });
 
+  }
+
+  onEdit(id) {
+    this.router.navigate([`/edit/${id}`]);
+  }
+
+  onDelete(id) {
+    this.amosservice.delete(id);
   }
 
   ngOnDestroy() {
