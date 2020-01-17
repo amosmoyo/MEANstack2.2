@@ -3,6 +3,7 @@ import { Amos } from 'src/app/amos';
 import { AmosService } from 'src/app/amos.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { PageEvent } from '@angular/material';
 
 @Component({
   selector: 'app-post',
@@ -12,6 +13,13 @@ import { Router } from '@angular/router';
 export class PostComponent implements OnInit, OnDestroy {
   openState = false;
   sub: Subscription;
+
+  loading = false;
+
+  length = 0;
+  postPerPage = 2;
+  currentPage = 1;
+  pageSizeOption = [1, 2, 5, 10];
 
   /*@Input()*/ posts: Amos[] = [
     /*
@@ -26,12 +34,23 @@ export class PostComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit() {
-    this.amosservice.myPost();
+    this.loading = true;
+    this.amosservice.myPost(this.postPerPage, this.currentPage);
     this.sub = this.amosservice.getPostsUpdate()
-    .subscribe((data: Amos[]) => {
-      this.posts = data;
+    .subscribe((data: {postdata: Amos[], maxCount: number}) => {
+      this.loading = false;
+      this.posts = data.postdata;
+      this.length = data.maxCount;
     });
 
+  }
+
+  onPage(pageData: PageEvent) {
+    console.log(pageData);
+    this.currentPage = pageData.pageIndex + 1;
+    this.postPerPage = pageData.pageSize;
+
+    this.amosservice.myPost(this.postPerPage, this.currentPage);
   }
 
   onEdit(id) {
@@ -39,7 +58,9 @@ export class PostComponent implements OnInit, OnDestroy {
   }
 
   onDelete(id) {
-    this.amosservice.delete(id);
+    this.amosservice.delete(id).subscribe(() => {
+      this.amosservice.myPost(this.postPerPage, this.currentPage);
+    });
   }
 
   ngOnDestroy() {

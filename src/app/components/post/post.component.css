@@ -11,3 +11,7 @@ img{
   width: 100%;
   height: inherit;
 }
+
+mat-spinner{
+  margin: 0 auto;
+}

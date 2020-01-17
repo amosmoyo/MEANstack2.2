@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
 })
 export class AmosService {
   posts: Amos[] = [];
-  private postsUpdate = new Subject<Amos[]>();
+  private postsUpdate = new Subject<{postdata: Amos[], maxCount: number}>();
+  maxCount;
   url = 'http://localhost:3000/api/posts';
   constructor(
     private http: HttpClient,
@@ -32,30 +33,37 @@ export class AmosService {
 
     this.http.post<{message: string, document: any}>(`${this.url}`, postForm)
     .subscribe((data) => {
-      this.posts.push(data.document);
-      this.postsUpdate.next([...this.posts]);
+      /*this.posts.push(data.document);
+      this.postsUpdate.next([...this.posts]);*/
+      this.router.navigate(['/']);
     });
   }
 
   // read all posts //
-  myPost() {
-    this.http.get<{message: string, documents: any}>(`${this.url}`)
+  myPost(postPerPage: number, currentPage: number) {
+    this.http.get<{message: string, documents: any, maxCount: number}>(`${this.url}?pagesize=${postPerPage}&page=${currentPage}`)
     .pipe(
-      map((data) => {
-        return data.documents.map(x => {
-          return {
-            id: x._id,
-            title: x.title,
-            description: x.description,
-            imagePath: x.imagePath
-          };
-        });
+      map((data ) => {
+        return {
+          posts: data.documents.map(x => {
+            return {
+              id: x._id,
+              title: x.title,
+              description: x.description,
+              imagePath: x.imagePath
+            };
+          }),
+          maxCount: data.maxCount
+        };
       })
     )
     .subscribe((dataPosts) => {
       console.log(dataPosts);
-      this.posts = dataPosts;
-      this.postsUpdate.next([...this.posts]);
+      this.posts = dataPosts.posts;
+      this.postsUpdate.next({
+        postdata: [...this.posts],
+        maxCount: dataPosts.maxCount,
+      });
     });
   }
 
@@ -85,11 +93,12 @@ export class AmosService {
     }
     this.http.post<{message: string, document: any }>(`${this.url}/update/${Id}`, postForm)
     .subscribe((data) => {
-      const newPosts = [...this.posts];
+     /* const newPosts = [...this.posts];
       const indx = newPosts.findIndex(x => x.id === Id);
       newPosts[indx] = data.document;
       this.posts = newPosts;
-      this.postsUpdate.next([...this.posts]);
+      this.postsUpdate.next([...this.posts]);*/
+
       this.router.navigate(['/']);
     });
   }
@@ -97,14 +106,15 @@ export class AmosService {
   // delete one image :::
 
   delete(id) {
-    this.http.get<{message: string}>(`${this.url}/delete/${id}`)
-    .subscribe((data) => {
+    return this.http.get<{message: string}>(`${this.url}/delete/${id}`);
+    /*.subscribe((data) => {
       console.log(data.message);
       const newPost = [...this.posts];
       const remainPost = newPost.filter(x => x.id !== id);
       this.posts = remainPost;
       this.postsUpdate.next([...this.posts]);
-    });
+    });*/
   }
+
 
 }

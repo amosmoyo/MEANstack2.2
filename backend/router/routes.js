@@ -66,11 +66,25 @@ router.route('').post(multer({storage: storage}).single('image'), (req, res, nex
 // Read posts
 
 router.route('').get((req, res, next) => {
-  console.log(req.query);
-  Post.find().then((docs) => {
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.page;
+  let mainDocuments;
+  const postQuery = Post.find();
+
+  if(pageSize && currentPage){
+    postQuery
+    .skip(pageSize * (currentPage -1))
+    .limit(pageSize);
+  }
+  postQuery.then((docs) => {
+    mainDocuments = docs;
+    return Post.count();
+  }).then((count) => {
+    console.log(count);
     res.status(200).json({
       message: 'All Documents',
-      documents: docs
+      documents: mainDocuments,
+      maxCount: count
     })
   })
 })

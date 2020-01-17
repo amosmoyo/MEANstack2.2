@@ -4,7 +4,8 @@
     <h3>Post</h3>
     <mat-divider></mat-divider>
     <br>
-    <mat-accordion *ngIf="posts.length > 0">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+    <mat-accordion *ngIf="posts.length > 0 && !loading" >
       <mat-expansion-panel
       (opened)= "openState = true"
       (closed)="openState = false"
@@ -34,6 +35,14 @@
       </mat-expansion-panel
       >
     </mat-accordion>
+    <mat-paginator
+    [length] = "length"
+    [pageSize] = "postPerPage"
+    [pageSizeOptions] ="pageSizeOption"
+    (page)="onPage($event)"
+    ></mat-paginator
+
+      >
   </mat-card>
   <p *ngIf="posts.length <= 0" class="text">
     No Posts at the moment
